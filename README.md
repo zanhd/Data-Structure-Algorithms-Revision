@@ -215,6 +215,40 @@ class Graph {
         return Arrays.asList(distance);
     }
     
+    
+    public List<Integer> optimizedDijkstraSET(int src) {
+        Integer[] distance = new Integer[this.n];
+        Arrays.fill(distance, this.INF);
+        
+        boolean[] visited = new boolean[this.n];
+        
+        Comparator<Pair> cmp = (a, b) -> a.second - b.second;
+        TreeSet<Pair> set = new TreeSet<>(cmp);
+        
+        set.add(new Pair(src, 0));
+        
+        while(!set.isEmpty()) {
+            Pair data = set.pollFirst();
+            
+            int u = data.first;
+            if(visited[u]) continue;
+            
+            distance[u] = data.second;
+            visited[u] = true;
+            
+            for(Pair pair : adj.get(u)) {
+                int v = pair.first;
+                int w = pair.second;
+                
+                if(distance[u] + w < distance[v]) {
+                    set.add(new Pair(v, distance[u] + w));
+                }
+            }
+        }
+        
+        return Arrays.asList(distance);
+    }
+    
 }
 
 class Main {
@@ -247,6 +281,12 @@ class Main {
         
         System.out.print("Dijkstra [using PQ]: ");
         for(Integer distance : graph.optimizedDijkstraPQ(src)) {
+            System.out.print((distance == graph.INF ? "INF" : distance) + " ");
+        }
+        
+        System.out.println();
+        System.out.print("Dijkstra [using Set]: ");
+        for(Integer distance : graph.optimizedDijkstraSET(src)) {
             System.out.print((distance == graph.INF ? "INF" : distance) + " ");
         }
     }
