@@ -180,6 +180,41 @@ class Graph {
         return distance;
     }
     
+    
+    public List<Integer> optimizedDijkstraPQ(int src) {
+        Integer[] distance = new Integer[this.n];
+        Arrays.fill(distance, this.INF);
+        
+        Comparator<Pair> cmp = (a, b) -> a.second - b.second; //min-weight
+        
+        PriorityQueue<Pair> Q = new PriorityQueue<>(cmp); 
+        boolean[] visited = new boolean[this.n];
+        
+        Q.add(new Pair(src, 0));
+        
+        
+        while(!Q.isEmpty()) {
+            Pair data = Q.poll();
+            
+            int u = data.first;
+            if(visited[u]) continue;
+            
+            distance[u] = data.second;
+            visited[u] = true;
+            
+            for(Pair p : adj.get(u)) {
+                int v = p.first;
+                int w = p.second;
+                
+                if(distance[u] + w < distance[v]) {
+                    Q.add(new Pair(v, distance[u] + w));
+                }
+            }            
+        }
+        
+        return Arrays.asList(distance);
+    }
+    
 }
 
 class Main {
@@ -203,13 +238,19 @@ class Main {
         System.out.print("Enter src for traversal-algorithsm : ");
         int src = sc.nextInt();
         
-        System.out.print("Dijkstra : ");
+        System.out.print("Dijkstra [BruteForce]: ");
         for(Integer distance : graph.dijkstra(src)) {
+            System.out.print((distance == graph.INF ? "INF" : distance) + " ");
+        }
+        
+        System.out.println();
+        
+        System.out.print("Dijkstra [using PQ]: ");
+        for(Integer distance : graph.optimizedDijkstraPQ(src)) {
             System.out.print((distance == graph.INF ? "INF" : distance) + " ");
         }
     }
 }
-
 
 ```
 
